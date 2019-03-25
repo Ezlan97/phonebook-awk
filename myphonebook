@@ -1,0 +1,85 @@
+#!/bin/bash
+
+#
+#   _____ _____     _____ _____ 
+#  |   __|   __|___|   __|__   |
+#  |  |  |  |  |___|   __|   __|
+#  |_____|_____|   |_____|_____|
+#
+#                  Version 0.0.1
+#  
+#  Ezlan <https://github.com/Ezlan97>
+#
+
+echo "Welcome to MyPhoneBook"
+echo " "
+echo "Select the option by typing the appropriate number"
+echo "1: List out all the names of your friends"
+echo "2: Obtain phone number of given name"
+echo "3: To obtain email address of given name"
+echo "4: Give phone number of your friend, the output is his name"
+echo "5: Quit the program"
+read input
+
+if [ $input == 1 ] || [ $input == 2 ] || [ $input == 3 ] || [ $input == 4 ] ; then
+    echo "Your option is" $input
+    echo " "
+    # handle user request based on input number
+    if [ $input == 1 ]; then
+        # print name only
+        echo "Name of your friend: "
+        cat phonebook | awk -F: '{ print $1 }'
+    elif [ $input == 2 ]; then
+        # print number based on give name
+        echo "Enter name:"
+        read name
+        phoneNumber=$(grep $name phonebook | awk -F: '{ print $3 }')
+        if [ -z "$phoneNumber" ]; then
+            # no matching name
+            echo "No matching name with" $name "in phonebook"
+        else
+            # if there is matching name
+            echo $name "phone number is" $phoneNumber
+        fi
+    elif [ $input == 3 ]; then
+        # print email based on give name
+        echo "Enter name:"
+        read name
+        email=$(grep $name phonebook | awk -F: '{ print $4 }')
+        if [ -z "$email" ]; then
+            # no matching name
+            echo "No matching name with" $name "in phonebook"
+        else
+            # if there is matching name
+            echo $name "email address is" $email
+        fi
+    else
+        # print name based on given phone number
+        echo "Enter Phone Number:"
+        read phoneNumber
+        name=$(grep $phoneNumber phonebook | awk -F: '{ print $1 }')
+        if [ -z "$phoneNumber" ]; then
+            # no matching phoneNumber
+            echo "No matching phone number with" $phoneNumber "in phonebook"
+        else
+            # if there is matching name
+            echo $phoneNumber "this phone number belongs to" $name
+        fi
+    fi
+elif [ $input == 5 ]; then
+    # exit script
+    echo "Bye"
+    exit
+else
+    # error handling
+    echo "wrong input, enter between number 1 to 5 only!"
+fi
+
+# if user want to continue using this program
+echo " "
+read -p "Want to continue? press 'y' for yes or 'n' for no" -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+    ./myphonebook
+fi
